@@ -1,0 +1,95 @@
+extends _layout.jade
+
+block content
+  .dashboard
+    h1.title Sounds Delicious Music &mdash; Admin
+
+    h2 FAQ
+    p Enter Markdown (<a href="https://markdown-guide.readthedocs.io/en/latest/basics.html">Guide</a>) for the FAQ section
+    form(method="POST" action="/update/faq")
+      textarea(name="content")= meta.faq
+      button.button.button--positive Submit
+
+    h2 Term Equivalences
+    p Comma separated equivalences, one on each line
+    form(method="POST" action="/update/terms")
+      textarea(name="content")= meta.terms
+      button.button.button--positive Submit
+
+    h2 Search Blacklist
+    p Comma separated terms that are to be removed from all search queries
+    form(method="POST" action="/update/blacklist")
+      textarea(name="content")= meta.blacklist
+      button.button.button--positive Submit
+
+    h2 CSV Upload
+    p Upload the latest CSV version. This <strong>overrides and deletes existing table data</strong>.
+
+    form(method="POST" action="/upload" enctype="multipart/form-data").csv-upload
+      input(type="file" name="csv" accept="*.csv")
+      button.button.button--positive Upload CSV
+
+    h2 Song Database
+    p The first cell of the table (Title) is used to index and identify records on the database. The first column is fixed, while the others can be adjusted as you scroll. Any row in the database table below can be edited by clicking on any of the cells, and then pressing the save button after scrolling right.
+
+    //- p.flex.flex--between
+      button.button.button--positive.js--pre-generate-new Generate New Peaks
+      button.button.js--pre-generate Regenerate ALL Peaks (Overwrite)
+
+    .table--fixed.table--songs
+      table
+        thead
+          tr
+            th Title
+            th ID
+            th Sort Rank
+            th Artist
+            th Genre
+            //- th Collection
+            //- th Tempo
+            //- th Energy
+            th Primary Keywords
+            //- th Secondary Keywords
+            th Instruments
+            //- th Stems?
+            th Searchable Keywords
+            th Save
+            th Delete
+        tbody
+          each song in songs
+            tr(data-id="#{ song.id }")
+              td(contenteditable)= song.title
+              td= song.num_id
+              td(contenteditable) !{ song.sort_rank === 1000 ? null : song.sort_rank }
+              td(contenteditable)= song.artist
+              td(contenteditable)= song.genre
+              //- td(contenteditable)= song.collec
+              //- td(contenteditable)= song.tempo
+              //- td(contenteditable)= song.energy
+              td(contenteditable)= song.primary_keywords.join(', ')
+              //- td(contenteditable)= song.secondary_keywords.join(', ')
+              td(contenteditable)= song.instruments.join(', ')
+              //- td(contenteditable)= song.has_stems ? 'yes' : 'no'
+              td(contenteditable)= song.searchable_keywords.join(', ')
+              td
+                .button.button--positive.js-save-row Save
+              td
+                .button.button--negative.js-delete-row Delete
+
+    h2 User Download Log
+    p Track downloads by users
+
+    .table.table--songs
+      table
+        thead
+          tr
+            th Title
+            th Email
+        tbody
+          each log in activityLog
+            tr
+              td= log.title
+              td= log.email
+
+block js
+  script(src="/javascripts/dashboard.js")

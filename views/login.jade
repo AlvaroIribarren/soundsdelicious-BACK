@@ -1,0 +1,5 @@
+extends _layout.jade
+
+block content
+  form(method="POST" action="/admin").login
+    input(type="password" placeholder="Enter password" name="password")
