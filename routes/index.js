@@ -10,6 +10,7 @@ const sgMail = require('@sendgrid/mail')
 const marked = require('marked')
 const parse = require('csv-parse')
 const energyEq = require('../special/energy-eq.js')
+var fs = require('fs');
 
 const archiver = require('archiver')
 const path = require('path');
@@ -54,6 +55,20 @@ router.post('/meta', (req, res) => {
     console.log(err)
     return res.sendStatus(400)
   })
+})
+
+router.get('/peaks/:songTitle', async (req, res) => {
+  const songTitle = req.params.songTitle;
+
+  console.log('Searching:', songTitle)
+  const peaksFolder = `./public/songs-peaks`;
+  const dat = `${peaksFolder}/${songTitle}/${songTitle}.dat`
+  const json = `${peaksFolder}/${songTitle}/${songTitle}.json`
+
+  fs.readFile(json, 'utf8', function(err, data){
+    console.log(data);
+    res.send(JSON.parse(data))
+  });
 })
 
 const _getMetaFromTitle = title => {

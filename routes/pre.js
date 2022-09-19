@@ -27,12 +27,12 @@ const generatePeak = async (s, allowOverwrite = true) => {
       return false
     }
     shell.exec(`mkdir "${destDir}"`) // create dest folder
-    shell.exec(`audiowaveform -i "${path}" -o "${destName}.dat" --pixels-per-second 20 --bits 8`)
-    shell.exec(`sleep 1`)
-    shell.exec(`audiowaveform -i "${destName}.dat" -o "${destName}.json"`)
-    shell.exec(`sleep 1`)
+    shell.exec(`.\\audiowaveform -i "${path}" -o "${destName}.dat" --pixels-per-second 20 --bits 8`)
+    // shell.exec(`sleep 1`)
+    shell.exec(`.\\audiowaveform -i "${destName}.dat" -o "${destName}.json"`)
+    // shell.exec(`sleep 1`)
     shell.exec(`python ./deps/scale-json.py "${destName}.json"`)
-    shell.exec(`sleep 3`)
+    // shell.exec(`sleep 3`)
     return true
   } catch (e) {
     console.log(e)
@@ -49,9 +49,13 @@ const generatePeak = async (s, allowOverwrite = true) => {
  */
 const generatePeaks = async (allowOverwrite = true) => {
   const songs = await Song.find({})
-  songs.forEach(s =>
-    generatePeak(s.title, allowOverwrite)
-  )
+  
+  let counter = 0;
+  for (const song of songs) {
+    const result = await generatePeak(song.title, allowOverwrite)
+    console.log(`Counter ${counter}, result: ${result}`);
+    counter++;
+  }
 }
 
 router.post('/generate', async (req, res) => {
