@@ -20,17 +20,17 @@ sgMail.setApiKey('SG.2-ntv8rTRX25gLswccXWyQ.J2A200sYbgZU7WCf_bLRKqqO5kvieb_pQkmV
 /**
  * Get list of all collections used in the song
  */
-router.post('/collections', (req, res) => {
-  const collections = []
+// router.post('/collections', (req, res) => {
+//   const collections = []
 
-  Song.distinct('collec')
-  .then(collecs => collecs.filter(c => !!c && c !== ' ')) // remove empty spaces
-  .then(collecs => collecs.map(collec => collections.push(...collec.split(', ')))) // split some values by comma
-  .then(_ => {
-    let collecs = [...new Set(collections)]
-    res.json(collecs)
-  })
-})
+//   Song.distinct('collec')
+//   .then(collecs => collecs.filter(c => !!c && c !== ' ')) // remove empty spaces
+//   .then(collecs => collecs.map(collec => collections.push(...collec.split(', ')))) // split some values by comma
+//   .then(_ => {
+//     let collecs = [...new Set(collections)]
+//     res.json(collecs)
+//   })
+// })
 
 /**
  * Get all metadata (about and FAQ)
@@ -191,6 +191,8 @@ const getSongsFromTerm = (term, cb) => {
       return Promise.all([Song.find().sort({ 'num_id': -1 }), terms])
     })
     .then(([allSongs, terms]) => {
+      console.log("Length");
+      console.log(allSongs.length);
       let songs = [].concat.apply([], allSongs)
       // Remove duplicates
       songs = songs.filter((song, i, songs) =>
@@ -199,12 +201,11 @@ const getSongsFromTerm = (term, cb) => {
       // Do the actual searching/filtering here!
       songs = songs.filter(s => {
         // Singular array of all search keywords that matter
-        const searchKeywords = [...s.primary_keywords, ...s.secondary_keywords, ...s.instruments, ...s.searchable_keywords]
+        const searchKeywords = [...s.primary_keywords, ...s.instruments, ...s.searchable_keywords]
 
         return anyContainsTerms([
           s.title,
           s.genre.join(" "),
-          s.collec.join(" "),
           searchKeywords.join(" ")], terms)
       })
 
