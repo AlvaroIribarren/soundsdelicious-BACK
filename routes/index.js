@@ -274,17 +274,16 @@ router.post("/dl", (req, res) => {
   // Add every song's information
   songs.forEach((s) => {
     const title = s.title;
-    const p = `${title}`;
     toZip.push({
-      path: `${p}.${format}`,
-      name: `${p}.${format}`,
+      path: `${title}/${title}.${format}`,
+      name: `${title}.${format}`,
     });
   });
 
   // Add correct path to all
-  toZip = toZip.map((s) => {
-    const spath = s.path;
-    const name = s.name;
+  toZip = toZip.map((songToZip) => {
+    const spath = songToZip.path;
+    const name = songToZip.name;
     const fpath = path.join(__dirname, "..", "public", "songs", spath);
     return {
       path: fpath,
